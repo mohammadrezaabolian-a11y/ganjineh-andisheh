@@ -42,3 +42,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
+configurations.configureEach {
+    exclude(group = "com.intellij", module = "annotations")
+}
