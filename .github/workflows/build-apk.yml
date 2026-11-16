@@ -1,4 +1,3 @@
-
 name: Build Android APK
 
 on:
@@ -10,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -20,11 +24,16 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Check Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME"
+          sdkmanager --version
 
       - name: Install Android SDK packages
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -39,3 +48,4 @@ jobs:
         with:
           name: ganjineh-andisheh-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
